@@ -9,7 +9,6 @@ import { Asset, Money } from '@waves/data-entities';
 import { TRANSACTION_TYPE } from '@waves/ts-types';
 import { AssetAmountInput } from 'assets/amountInput';
 import { AssetSelect, AssetSelectOption } from 'assets/assetSelect';
-import { swappableAssetTickersByVendor } from 'assets/constants';
 import { AssetDetail } from 'assets/types';
 import { BalancesItem } from 'balances/types';
 import clsx from 'clsx';
@@ -410,19 +409,20 @@ export function SwapForm({
     }
   }, [swapVendorTouched, profitVendor]);
 
+  const swappableAssetEntries = usePopupSelector(
+    state => state.swappableAssets
+  );
   const fromSwappableAssets = useMemo(() => {
-    const availableTickers = new Set(
-      Object.values(swappableAssetTickersByVendor)
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .filter(tickersSet => tickersSet.has(toAsset.ticker!))
-        .flatMap(tickersSet => Array.from(tickersSet))
+    const availableIds = new Set(
+      Object.values(swappableAssetEntries)
+        .filter(ids => ids.includes(toAsset.id))
+        .flat()
     );
 
     return swappableAssets
       .filter(asset => asset.id !== toAsset.id)
       .map((asset): AssetSelectOption => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const isAvailable = availableTickers.has(asset.ticker!);
+        const isAvailable = availableIds.has(asset.id);
 
         return {
           ...asset,
@@ -430,26 +430,24 @@ export function SwapForm({
           disabledTooltip: isAvailable
             ? undefined
             : t('swap.notSwappablePairTooltip', {
-                assetTicker1: toAsset.ticker,
-                assetTicker2: asset.ticker,
+                assetDisplayName1: toAsset.ticker || toAsset.displayName,
+                assetDisplayName2: asset.ticker || asset.displayName,
               }),
         };
       });
-  }, [swappableAssets, toAsset, t]);
+  }, [swappableAssets, swappableAssetEntries, toAsset, t]);
 
   const toSwappableAssets = useMemo(() => {
-    const availableTickers = new Set(
-      Object.values(swappableAssetTickersByVendor)
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        .filter(tickersSet => tickersSet.has(fromAsset.ticker!))
-        .flatMap(tickersSet => Array.from(tickersSet))
+    const availableIds = new Set(
+      Object.values(swappableAssetEntries)
+        .filter(ids => ids.includes(fromAsset.id))
+        .flat()
     );
 
     return swappableAssets
       .filter(asset => asset.id !== fromAsset.id)
       .map((asset): AssetSelectOption => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const isAvailable = availableTickers.has(asset.ticker!);
+        const isAvailable = availableIds.has(asset.id);
 
         return {
           ...asset,
@@ -457,12 +455,12 @@ export function SwapForm({
           disabledTooltip: isAvailable
             ? undefined
             : t('swap.notSwappablePairTooltip', {
-                assetTicker1: fromAsset.ticker,
-                assetTicker2: asset.ticker,
+                assetDisplayName1: fromAsset.ticker || fromAsset.displayName,
+                assetDisplayName2: asset.ticker || asset.displayName,
               }),
         };
       });
-  }, [fromAsset, swappableAssets, t]);
+  }, [swappableAssets, swappableAssetEntries, fromAsset, t]);
 
   return (
     <SwapLayout>

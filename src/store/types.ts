@@ -361,6 +361,11 @@ export type AppAction =
       meta?: never;
     }
   | {
+      type: typeof ACTION.UPDATE_SWAPPABLE_ASSETS;
+      payload: Record<string, string[]>;
+      meta?: never;
+    }
+  | {
       type: typeof ACTION.SET_ADDRESS;
       payload: { address: string; name: string };
       meta?: never;

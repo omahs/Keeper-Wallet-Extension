@@ -269,6 +269,17 @@ export function createUpdateState(store: PopupStore) {
       });
     }
 
+    const swappableAssets = getParam(state.swappableAssets, {});
+    if (
+      swappableAssets &&
+      !deepEqual(currentState.swappableAssets, swappableAssets)
+    ) {
+      store.dispatch({
+        type: ACTION.UPDATE_SWAPPABLE_ASSETS,
+        payload: swappableAssets,
+      });
+    }
+
     const usdPrices = getParam(state.usdPrices, {});
     if (usdPrices && !deepEqual(usdPrices, currentState.usdPrices)) {
       store.dispatch({

@@ -7,7 +7,7 @@
   {
     "name": "background",
     "path": "dist/build/background.js",
-    "limit": "290 kB"
+    "limit": "293 kB"
   },
   {
     "name": "ui",
@@ -16,7 +16,7 @@
       "dist/build/popup.js",
       "dist/build/vendors*.js"
     ],
-    "limit": "529 kB"
+    "limit": "559 kB"
   },
   {
     "name": "contentscript",

@@ -1,5 +1,4 @@
 import { Money } from '@waves/data-entities';
-import { isSwappableAsset } from 'assets/utils';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
@@ -35,6 +34,8 @@ export function AssetItem({
   const dispatch = usePopupDispatch();
   const assets = usePopupSelector(state => state.assets);
   const currentNetwork = usePopupSelector(state => state.currentNetwork);
+  const swappableAssets = usePopupSelector(state => state.swappableAssets);
+
   const asset = assets[assetId];
 
   const displayName = asset?.displayName;
@@ -174,7 +175,7 @@ export function AssetItem({
           </Tooltip>
 
           {currentNetwork === 'mainnet' &&
-            isSwappableAsset(currentNetwork, assetId) && (
+            Object.values(swappableAssets).flat().includes(assetId) && (
               <Tooltip content={t('assetInfo.swapAssetTooltip')}>
                 {props => (
                   <button
